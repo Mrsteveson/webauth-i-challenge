@@ -3,6 +3,7 @@ const express = require('express');
 const helmet = require('helmet');
 const bcrypt = require('bcryptjs');// Add the library
 const session = require('express-session');//--------bring in library
+const KnexSessionStore = require('connect-session-knex')(session);
 
 // Import Routers/helpers
 // const usersRouter = require('./users/users-router.js');
@@ -20,6 +21,13 @@ const sessionConfig = {
     },
     resave: false, //resave session even if it did/didnt change.
     saveUninitialized: true, //create new session automatically. Be sure to comply with law reqs.
+    store: new KnexSessionStore({
+        tablename: 'sessions',
+        sidfieldname: 'sid',
+        knex: db,
+        createtable: true,
+        clearInterval: 1000 * 60 * 30,
+    }),
 };
 
 
